@@ -3,6 +3,7 @@ import Hero from './components/Hero'
 import Generator from './components/Generator'
 import Workout from './components/Workout'
 import { generateWorkout } from './utils/Functions'
+import BlurOnScroll from './components/BlurOnScroll'
 
 function App() {
   const [workout,setWorkout] = useState(null);
@@ -11,7 +12,6 @@ function App() {
   const [goals,setGoals] = useState('strength_power');
 
   function updateWorkout() {
-    window.location.href = '#workout'
     if (muscles.length < 1) {
       return
     }
@@ -21,6 +21,7 @@ function App() {
 
   return (
     <main className='min-h-screen flex flex-col bg-gradient-to-r from-slate-800 to-slate-950 text-white text-sm sm:text-base'>
+      <BlurOnScroll>
       <Hero />
       <Generator
       poison={poison}
@@ -32,6 +33,7 @@ function App() {
       updateWorkout={updateWorkout}
       />
       {workout && (<Workout workout={workout} />)}
+      </BlurOnScroll>
     </main>
   )
 }
