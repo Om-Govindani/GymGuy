@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const BlurOnScroll = ({ children }) => {
   const [blur, setBlur] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef(null);
 
   useEffect(() => {
-    let scrollTimeout;
+    const maxBlur = 3; // Reduced maximum blur amount
+    const blurThreshold = 200; // Pixels to reach maximum blur
 
     const handleScroll = () => {
-      setIsScrolling(true);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
       const scrollTop = window.scrollY;
-      const maxBlur = 10; // Maximum blur amount
-      const blurAmount = Math.min(scrollTop / 500, maxBlur); // Adjust the divisor to control blur sensitivity
+      const blurAmount = Math.min(scrollTop / blurThreshold, maxBlur);
       setBlur(blurAmount);
 
-      // Clear the previous timeout
-      clearTimeout(scrollTimeout);
-
-      // Set a new timeout to reset the blur after scrolling stops
-      scrollTimeout = setTimeout(() => {
-        setIsScrolling(false);
+      scrollTimeoutRef.current = setTimeout(() => {
         setBlur(0); // Reset blur to 0 when scrolling stops
-      }, 100); // Adjust this delay as needed
+      }, 50); // Adjust this delay as needed
     };
 
-    const debouncedHandleScroll = () => {
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
+    const optimizedScrollHandler = () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
       }
-      handleScroll();
+      requestAnimationFrame(handleScroll);
     };
 
-    window.addEventListener('scroll', debouncedHandleScroll);
+    window.addEventListener('scroll', optimizedScrollHandler);
     return () => {
-      window.removeEventListener('scroll', debouncedHandleScroll);
-      clearTimeout(scrollTimeout); // Clear timeout on cleanup
+      window.removeEventListener('scroll', optimizedScrollHandler);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current); // Clear timeout on cleanup
+      }
     };
   }, []);
 
