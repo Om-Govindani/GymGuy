@@ -11,7 +11,7 @@ const BlurOnScroll = ({ children }) => {
       setIsScrolling(true);
       const scrollTop = window.scrollY;
       const maxBlur = 10; // Maximum blur amount
-      const blurAmount = Math.min(scrollTop / 200, maxBlur); // Adjust the divisor to control blur sensitivity
+      const blurAmount = Math.min(scrollTop / 500, maxBlur); // Adjust the divisor to control blur sensitivity
       setBlur(blurAmount);
 
       // Clear the previous timeout
